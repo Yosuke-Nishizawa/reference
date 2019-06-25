@@ -1,0 +1,27 @@
+package sunaba.simuration;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+public class JSTUTC {
+
+    public static void main(String[] args) {
+        //JST -> unix time
+        LocalDateTime now = LocalDateTime.of(2019, 1, 1, 9, 0);
+        System.out.println(now);
+        ZonedDateTime jst = ZonedDateTime.of(now, ZoneId.of("Asia/Tokyo"));
+        System.out.println(jst);
+        ZonedDateTime utc = jst.withZoneSameInstant(ZoneId.of("UTC"));
+        System.out.println(utc);
+        long unix = utc.toEpochSecond();
+        System.out.println(unix);
+        //unix time -> JST
+        ZonedDateTime utc2 = ZonedDateTime.ofInstant(Instant.ofEpochSecond(unix), ZoneId.of("UTC"));
+        ZonedDateTime jst2 = utc2.withZoneSameInstant(ZoneId.of("Asia/Tokyo"));
+        LocalDateTime jst3 = jst2.toLocalDateTime();
+        System.out.println(jst3);
+    }
+
+}
