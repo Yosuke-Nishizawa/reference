@@ -1,0 +1,37 @@
+package dashboard_search.domain.model;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
+import dashboard_search.domain.validate.annotation.IsLocalDate;
+import dashboard_search.domain.validate_group.IdGroup;
+import dashboard_search.domain.validate_group.NoIdGroup;
+import lombok.Data;
+
+@Data
+public class IgnoreModel {
+    @NotEmpty(groups = IdGroup.class)
+    private String id;
+    @Pattern(regexp = "^otherval$", groups = NoIdGroup.class)
+    private String other;
+    @Pattern(regexp = "^true$", groups = NoIdGroup.class)
+    private String check;
+    @NotEmpty(groups = NoIdGroup.class)
+    @IsLocalDate(pattern = "uuuu/MM/dd", groups = NoIdGroup.class)
+    private String dateValue;
+    
+    public boolean getCheck() {
+        return Boolean.valueOf(this.check);
+    }
+    public LocalDate getDateValue() {
+        try {
+            return LocalDate.parse(this.dateValue, DateTimeFormatter.ofPattern("uuuu/MM/dd").withResolverStyle(ResolverStyle.STRICT));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}
