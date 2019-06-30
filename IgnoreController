@@ -1,0 +1,50 @@
+package dashboard_search.app.search;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import dashboard_search.domain.model.IgnoreModel;
+import dashboard_search.domain.validate_group.IdGroup;
+import dashboard_search.domain.validate_group.NoIdGroup;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@RequestMapping("/ignore")
+@Slf4j
+public class IgnoreController {
+    @GetMapping
+    public String init(IgnoreModel ignoreModel) {
+        return "ignore_page";
+    }
+    
+    @GetMapping(value = "/verify", params = "id!=")
+    public String verifyIdInputed(@Validated(IdGroup.class) IgnoreModel ignoreModel,BindingResult bindingResult) {
+        log.info("-------------------- id inputed ----------------");
+        return innerProcess(bindingResult, ignoreModel);
+    }
+    @GetMapping(value = "/verify", params = "id=")
+    public String verifyIdNoInputed(@Validated(NoIdGroup.class) IgnoreModel ignoreModel,BindingResult bindingResult) {
+        log.info("---------------- id no inputed ---------------------");
+        return innerProcess(bindingResult, ignoreModel);
+    }
+    
+    private String innerProcess(BindingResult bindingResult, IgnoreModel ignoreModel) {
+        if(bindingResult.hasErrors()) {
+            bindingResult.getFieldErrors().forEach(fieldError ->{
+                log.error("field:{}, message:{}",fieldError.getField(), fieldError.getDefaultMessage());
+                if(fieldError.getCode().equals("typeMismatch")) {
+                    log.error(fieldError.toString());
+                }
+            });
+            log.info(ignoreModel.toString());
+            return "ignore_page";
+        }else {
+            log.info("no error");
+            log.info(ignoreModel.toString());
+            return "ignore_page";
+        }
+    }
+}
